@@ -1,0 +1,27 @@
+---
+version: "3.7"
+
+services:
+  vscode:
+    image: "docker.pkg.github.com/nolte/vscode-devcontainers/devops:latest"
+    volumes:
+      - "../:/go/src/github.com/nolte/tf-k8s-monitoring:cached"
+      - ~/.ssh:/home/vscode/.ssh:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+      ## reuse volumes for extensions
+      - tf-k8s-monitoring-vol:/home/vscode/.vscode-server/extensions
+      # And/or for VS Code Insiders
+      - tf-k8s-monitoring-vol-insiders:/home/vscode/.vscode-server-insiders/extension
+    environment:
+      # $(cat /etc/timezone)
+      - TZ=Europe/Berlin
+    cap_add:
+      - SYS_PTRACE
+    security_opt:
+      - seccomp:unconfined
+    entrypoint: zsh -c "while sleep 1000; do :; done"
+    network_mode: "host"
+
+volumes:
+  tf-k8s-monitoring-vol:
+  tf-k8s-monitoring-vol-insiders:
